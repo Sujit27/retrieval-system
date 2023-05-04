@@ -50,15 +50,20 @@ def main():
     llm=OpenAI()
     # # llm = HuggingFaceHub(repo_id="bigscience/bloom-7b1", model_kwargs={"temperature":0, "max_length":512})
 
-    qa = RetrievalQA.from_chain_type(llm, chain_type="stuff", retriever=retriever)
+    qa = ConversationalRetrievalChain.from_llm(llm, retriever=retriever)
 
+    chat_history = []
+    
     while True:
         query = input("Enter a query, or press q/Q to exit:\n")
         if query.lower() == 'q':
             break
         else:
             print("Running the query...")
-            print(qa.run(query))
+            input_to_llm = {"question":query,"chat_history":chat_history}
+            result = qa(input_to_llm)['answer']
+            print(result)
+            chat_history.append((query,result))
             
             # print("Getting relevant text from documents")
             # docs = retriever.get_relevant_documents(query)
