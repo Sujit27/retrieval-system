@@ -11,13 +11,16 @@ from langchain.schema import Document
 from langchain.document_loaders import TextLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbeddings 
+from langchain import HuggingFaceHub
 from langchain.vectorstores import Chroma
+from langchain.chains import ConversationalRetrievalChain
 
 warnings.filterwarnings("ignore")
 
 filePath1 = 'input_samples/Dynamic_density.txt'
-filePath2 = 'input_samples/Bert_Shepard.txt'
+filePath2 = 'input_samples/state_of_the_union.txt'
 os.environ["OPENAI_API_KEY"] = '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'
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = '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'
 os.environ["TOKENIZERS_PARALLELISM"] = 'false'
 
 def main():
@@ -33,7 +36,7 @@ def main():
     # print("The documents are loaded")
     
 
-    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200,separator = " ")
     texts = text_splitter.split_documents(documents)
     # print("Text split completed")
 
@@ -42,9 +45,12 @@ def main():
     db = Chroma.from_documents(texts, embeddings)
     # print("Embeddings generated")
 
-    retriever = db.as_retriever()
+    retriever = db.as_retriever(search_type="similarity",search_kwargs={"k": 3})
 
-    qa = RetrievalQA.from_chain_type(llm=OpenAI(), chain_type="stuff", retriever=retriever)
+    llm=OpenAI()
+    # # llm = HuggingFaceHub(repo_id="bigscience/bloom-7b1", model_kwargs={"temperature":0, "max_length":512})
+
+    qa = RetrievalQA.from_chain_type(llm, chain_type="stuff", retriever=retriever)
 
     while True:
         query = input("Enter a query, or press q/Q to exit:\n")
@@ -53,6 +59,12 @@ def main():
         else:
             print("Running the query...")
             print(qa.run(query))
+            
+            # print("Getting relevant text from documents")
+            # docs = retriever.get_relevant_documents(query)
+            # for doc in docs:
+            #     print(doc)
+            #     print("\n\n")
 
 
 if __name__ == '__main__':
