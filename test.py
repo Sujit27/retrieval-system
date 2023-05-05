@@ -7,6 +7,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.document_loaders.csv_loader import CSVLoader
 from langchain.document_loaders import TextLoader
+from langchain.document_loaders import UnstructuredFileLoader
 from langchain.vectorstores import FAISS
 from langchain.vectorstores import Chroma
 from langchain.embeddings import HuggingFaceEmbeddings
@@ -20,7 +21,7 @@ import tempfile
 
 os.environ["OPENAI_API_KEY"] = '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'
 
-uploaded_files = st.sidebar.file_uploader("upload", type="txt",accept_multiple_files=True)
+uploaded_files = st.sidebar.file_uploader("upload", accept_multiple_files=True)
 
 documents = []
 for uploaded_file in uploaded_files:
@@ -29,8 +30,11 @@ for uploaded_file in uploaded_files:
         tmp_file.write(uploaded_file.getvalue())
         tmp_file_path = tmp_file.name
 
-    # loader = CSVLoader(file_path=tmp_file_path, delimiter= ',',encoding="utf-8")
-    loader = TextLoader(tmp_file_path,encoding='utf8')
+    file_type = uploaded_file.name.split(".")[1]
+    if file_type == 'csv':
+        loader = CSVLoader(tmp_file_path,csv_args = {"delimiter": ','})
+    elif file_type == 'txt':
+        loader = TextLoader(tmp_file_path,encoding='utf8')
     documents.extend(loader.load())
 
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200,separator = " ")
@@ -55,7 +59,7 @@ if 'history' not in st.session_state:
     st.session_state['history'] = []
 
 if 'generated' not in st.session_state:
-    st.session_state['generated'] = ["Ask a query from the files uploaded " + uploaded_file.name + " 🤗"]
+    st.session_state['generated'] = ["Ask a query from the files uploaded " + " 🤗"]
 
 if 'past' not in st.session_state:
     st.session_state['past'] = ["Hey ! 👋"]

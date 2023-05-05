@@ -29,7 +29,8 @@ os.environ["TOKENIZERS_PARALLELISM"] = 'false'
 
 def main():
     
-    loader1 = TextLoader(filePath1, encoding='utf8')
+    # loader1 = TextLoader(filePath1, encoding='utf8')
+    loader1 = CSVLoader(file_path='input_samples/sample_table.csv',csv_args = {"delimiter": ','})
     # loader2 = TextLoader(filePath2, encoding='utf8')
 
     ### For multiple documents 
