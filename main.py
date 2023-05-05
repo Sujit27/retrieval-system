@@ -1,6 +1,7 @@
 import os
 import logging
 import warnings
+import tempfile
 
 from langchain.chains import RetrievalQA
 from langchain.llms import OpenAI
@@ -15,10 +16,13 @@ from langchain import HuggingFaceHub
 from langchain.vectorstores import Chroma
 from langchain.chains import ConversationalRetrievalChain
 
+from langchain.chat_models import ChatOpenAI
+from langchain.document_loaders.csv_loader import CSVLoader
+
 warnings.filterwarnings("ignore")
 
 filePath1 = 'input_samples/Dynamic_density.txt'
-filePath2 = 'input_samples/state_of_the_union.txt'
+# filePath2 = 'input_samples/state_of_the_union.txt'
 os.environ["OPENAI_API_KEY"] = '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'
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = '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'
 os.environ["TOKENIZERS_PARALLELISM"] = 'false'
@@ -26,10 +30,10 @@ os.environ["TOKENIZERS_PARALLELISM"] = 'false'
 def main():
     
     loader1 = TextLoader(filePath1, encoding='utf8')
-    loader2 = TextLoader(filePath2, encoding='utf8')
+    # loader2 = TextLoader(filePath2, encoding='utf8')
 
     ### For multiple documents 
-    loaders = [loader1,loader2]
+    loaders = [loader1]
     documents = []
     for loader in loaders:
         documents.extend(loader.load())
