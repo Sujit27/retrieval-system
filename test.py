@@ -8,6 +8,7 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain.document_loaders.csv_loader import CSVLoader
 from langchain.document_loaders import TextLoader
 from langchain.document_loaders import UnstructuredFileLoader
+from langchain.document_loaders import PyPDFLoader
 from langchain.vectorstores import FAISS
 from langchain.vectorstores import Chroma
 from langchain.embeddings import HuggingFaceEmbeddings
@@ -35,6 +36,8 @@ for uploaded_file in uploaded_files:
         loader = CSVLoader(tmp_file_path,csv_args = {"delimiter": ','})
     elif file_type == 'txt':
         loader = TextLoader(tmp_file_path,encoding='utf8')
+    elif file_type == 'pdf':
+        loader = PyPDFLoader(tmp_file_path)
     documents.extend(loader.load())
 
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200,separator = " ")
@@ -51,7 +54,7 @@ def conversational_chat(query):
         
     result = chain({"question": query, 
     "chat_history": st.session_state['history']})
-    st.session_state['history'].append((query, result["answer"]))
+    # st.session_state['history'].append((query, result["answer"]))
     
     return result["answer"]
 
