@@ -1,9 +1,11 @@
 import os
+import tiktoken
 import streamlit as st
 from streamlit_chat import message
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.chat_models import ChatOpenAI
+from langchain.chat_models import AzureChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.document_loaders.csv_loader import CSVLoader
 from langchain.document_loaders import TextLoader
@@ -12,6 +14,8 @@ from langchain.document_loaders import PyPDFLoader
 from langchain.vectorstores import FAISS
 from langchain.vectorstores import Chroma
 from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.llms import AzureOpenAI
+from typing import List
 import tempfile
 
 
@@ -20,10 +24,25 @@ import tempfile
 #     placeholder="Paste your openAI API key, sk-",
 #     type="password")
 
-os.environ["OPENAI_API_KEY"] = ''
+os.environ["OPENAI_API_TYPE"] = "azure"
+os.environ["OPENAI_API_BASE"] = ""
+os.environ["OPENAI_API_KEY"] = ""
 
 uploaded_files = st.sidebar.file_uploader("upload", accept_multiple_files=True)
 
+
+# class NewAzureOpenAI(AzureOpenAI):
+#     stop: List[str] = None
+#     @property
+#     def _invocation_params(self):
+#         params = super()._invocation_params
+#         # fix InvalidRequestError: logprobs, best_of and echo parameters are not available on gpt-35-turbo model.
+#         params.pop('logprobs', None)
+#         params.pop('best_of', None)
+#         params.pop('echo', None)
+#         #params['stop'] = self.stop
+#         return params
+    
 documents = []
 for uploaded_file in uploaded_files:
    #use tempfile because CSVLoader only accepts a file_path
@@ -47,7 +66,7 @@ embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 vectorstore = Chroma.from_documents(texts, embeddings)
 
 chain = ConversationalRetrievalChain.from_llm(
-llm = ChatOpenAI(temperature=0.0,model_name='gpt-3.5-turbo'),
+llm = AzureChatOpenAI(deployment_name="gpt-35-turbo"),
 retriever=vectorstore.as_retriever())
 
 def conversational_chat(query):
