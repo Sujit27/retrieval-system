@@ -20,7 +20,7 @@ import tempfile
 #     placeholder="Paste your openAI API key, sk-",
 #     type="password")
 
-os.environ["OPENAI_API_KEY"] = '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'
+os.environ["OPENAI_API_KEY"] = ''
 
 uploaded_files = st.sidebar.file_uploader("upload", accept_multiple_files=True)
 

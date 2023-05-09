@@ -10,6 +10,7 @@ from typing import List
 from langchain.schema import Document
 
 from langchain.document_loaders import TextLoader
+from langchain.document_loaders import PyPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbeddings 
 from langchain import HuggingFaceHub
@@ -21,7 +22,7 @@ from langchain.document_loaders.csv_loader import CSVLoader
 
 warnings.filterwarnings("ignore")
 
-filePath1 = 'input_samples/Dynamic_density.txt'
+filePath1 = 'input_samples/ast_sci_data_tables_sample.pdf'
 # filePath2 = 'input_samples/state_of_the_union.txt'
 os.environ["OPENAI_API_KEY"] = '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'
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = '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'
@@ -30,7 +31,8 @@ os.environ["TOKENIZERS_PARALLELISM"] = 'false'
 def main():
     
     # loader1 = TextLoader(filePath1, encoding='utf8')
-    loader1 = CSVLoader(file_path='input_samples/sample_table.csv',csv_args = {"delimiter": ','})
+    # loader1 = CSVLoader(file_path='input_samples/sample_table.csv',csv_args = {"delimiter": ','})
+    loader1 = PyPDFLoader(filePath1)
     # loader2 = TextLoader(filePath2, encoding='utf8')
 
     ### For multiple documents 
@@ -43,6 +45,9 @@ def main():
 
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200,separator = " ")
     texts = text_splitter.split_documents(documents)
+    # for text in texts:
+    #     print(text)
+    #     print("\n\n")
     # print("Text split completed")
 
     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
