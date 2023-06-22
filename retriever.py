@@ -26,7 +26,7 @@ class Retriever:
         else:
             callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
             # Make sure the model path is correct for your system!
-            self.llm_model = LlamaCpp(model_path="../models/vicuna-7b-1.1.ggmlv3.q4_0.bin", callback_manager=callback_manager, verbose=True)
+            self.llm_model = LlamaCpp(model_path="../models/vicuna-7b-1.1.ggmlv3.q4_0.bin", callback_manager=callback_manager, verbose=True, n_ctx=1024)
 
         self.retriever_chain = None
 

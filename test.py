@@ -21,9 +21,6 @@ import tempfile
 
 os.environ["OPENAI_API_KEY"] = config.open_ai_api_key
 
-# uploaded_files = st.sidebar.file_uploader("upload", accept_multiple_files=True)
-
-# bot = Retriever()
 
 def get_docs(streamlit_uploaded_files):
     documents = []
@@ -44,12 +41,6 @@ def get_docs(streamlit_uploaded_files):
 
     return documents
 
-# def conversational_chat(query):
-        
-#     result = chain({"question": query, "chat_history": st.session_state['history']})
-#     # st.session_state['history'].append((query, result["answer"]))
-    
-#     return result["answer"]
 
 def set_session():
 
