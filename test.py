@@ -15,10 +15,6 @@ from langchain.embeddings import HuggingFaceEmbeddings
 import tempfile
 
 
-# user_api_key = st.sidebar.text_input(
-#     label="#### Your OpenAI API key 👇",
-#     placeholder="Paste your openAI API key, sk-",
-#     type="password")
 
 os.environ["OPENAI_API_KEY"] = ''
 
@@ -77,16 +73,15 @@ with container:
         submit_button = st.form_submit_button(label='Send')
         
     if submit_button and user_input:
-        try:
-            output = conversational_chat(user_input)
-            
-            st.session_state['past'].append(user_input)
-            st.session_state['generated'].append(output)
-        except:
-            pass
+
+        output = conversational_chat(user_input)
+        
+        st.session_state['past'].append(user_input)
+        st.session_state['generated'].append(output)
+
 
 if st.session_state['generated']:
     with response_container:
         for i in range(len(st.session_state['generated'])):
-            message(st.session_state["past"][i], is_user=True, key=str(i) + '_user', avatar_style="big-smile")
-            message(st.session_state["generated"][i], key=str(i), avatar_style="thumbs")
+            message(st.session_state["past"][i], is_user=True, key=str(i) + '_user')
+            message(st.session_state["generated"][i], key=str(i))
