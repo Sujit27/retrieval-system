@@ -74,7 +74,7 @@ def main():
 
     uploaded_files = st.sidebar.file_uploader("upload", accept_multiple_files=True)
 
-    bot = Retriever()
+    bot = Retriever(llm_model='open-ai')
 
     bot.documents = get_docs(uploaded_files)
 

@@ -1,20 +1,14 @@
 import os
 import config
 
-import streamlit as st
-from streamlit_chat import message
-from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.chat_models import ChatOpenAI
-from langchain.chains import ConversationalRetrievalChain
-from langchain.document_loaders.csv_loader import CSVLoader
-from langchain.document_loaders import TextLoader
-from langchain.document_loaders import UnstructuredFileLoader
-from langchain.document_loaders import PyPDFLoader
-from langchain.vectorstores import FAISS
-from langchain.vectorstores import Chroma
 from langchain.embeddings import HuggingFaceEmbeddings
-import tempfile
+
+from langchain.llms import LlamaCpp
+from langchain import PromptTemplate, LLMChain
+from langchain.callbacks.manager import CallbackManager
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 
 class Retriever:
@@ -29,6 +23,10 @@ class Retriever:
 
         if llm_model == 'open-ai':
             self.llm_model = ChatOpenAI(temperature=0.0,model_name='gpt-3.5-turbo')
+        else:
+            callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+            # Make sure the model path is correct for your system!
+            self.llm_model = LlamaCpp(model_path="../models/vicuna-7b-1.1.ggmlv3.q4_0.bin", callback_manager=callback_manager, verbose=True)
 
         self.retriever_chain = None
 
