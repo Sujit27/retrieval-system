@@ -1,4 +1,6 @@
 import os
+import config
+
 import streamlit as st
 from streamlit_chat import message
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -16,7 +18,7 @@ import tempfile
 
 
 
-os.environ["OPENAI_API_KEY"] = ''
+os.environ["OPENAI_API_KEY"] = config.open_ai_api_key
 
 uploaded_files = st.sidebar.file_uploader("upload", accept_multiple_files=True)
 
